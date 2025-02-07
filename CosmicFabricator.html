@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Fabricator V1.2.0</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background-color: black; color: white; }
+        .container { margin-top: 50px; }
+        .button { padding: 10px 20px; margin: 10px; font-size: 18px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Cosmic Fabricator V1.2.0</h1>
+    <p>Start as a quantum fluctuation and build your own universe!</p>
+    
+    <div class="container">
+        <p>Quantum Energy: <span id="quantumEnergy">0</span></p>
+        <button class="button" onclick="generateEnergy()">Generate Quantum Energy</button>
+        <button class="button" onclick="upgradeParticleFusion()">Upgrade Particle Fusion (Cost: <span id="upgradeCost">10</span>)</button>
+        <button class="button" onclick="unlockDarkMatter()">Unlock Dark Matter (Cost: <span id="darkMatterCost">50</span>)</button>
+        <button class="button" onclick="createStar()">Create a Star (Cost: <span id="starCost">100</span>)</button>
+        <p>Dark Matter: <span id="darkMatter">0</span></p>
+        <p>Stars Created: <span id="stars">0</span></p>
+    </div>
+
+    <script>
+        let quantumEnergy = 0;
+        let fusionLevel = 1;
+        let upgradeCost = 10;
+        let darkMatter = 0;
+        let darkMatterCost = 50;
+        let stars = 0;
+        let starCost = 100;
+
+        function generateEnergy() {
+            quantumEnergy += fusionLevel;
+            updateDisplay();
+        }
+
+        function upgradeParticleFusion() {
+            if (quantumEnergy >= upgradeCost) {
+                quantumEnergy -= upgradeCost;
+                fusionLevel *= 2;
+                upgradeCost = Math.floor(upgradeCost * 2.5);
+                updateDisplay();
+            } else {
+                alert("Not enough Quantum Energy!");
+            }
+        }
+
+        function unlockDarkMatter() {
+            if (quantumEnergy >= darkMatterCost) {
+                quantumEnergy -= darkMatterCost;
+                darkMatter += 1;
+                darkMatterCost = Math.floor(darkMatterCost * 3);
+                updateDisplay();
+            } else {
+                alert("Not enough Quantum Energy!");
+            }
+        }
+
+        function createStar() {
+            if (quantumEnergy >= starCost) {
+                quantumEnergy -= starCost;
+                stars += 1;
+                starCost = Math.floor(starCost * 2);
+                updateDisplay();
+            } else {
+                alert("Not enough Quantum Energy!");
+            }
+        }
+
+        function updateDisplay() {
+            document.getElementById("quantumEnergy").innerText = quantumEnergy;
+            document.getElementById("upgradeCost").innerText = upgradeCost;
+            document.getElementById("darkMatter").innerText = darkMatter;
+            document.getElementById("darkMatterCost").innerText = darkMatterCost;
+            document.getElementById("stars").innerText = stars;
+            document.getElementById("starCost").innerText = starCost;
+        }
+    </script>
+</body>
+</html>
