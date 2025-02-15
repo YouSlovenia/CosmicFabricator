@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Fabricator V1.2.0</title>
+    <title>Cosmic Fabricator V1.#.0</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: black; color: white; }
         .container { margin-top: 50px; }
@@ -11,7 +11,7 @@
     </style>
 </head>
 <body>
-    <h1>Cosmic Fabricator V1.2.0</h1>
+    <h1>Cosmic Fabricator V1.3.0</h1>
     <p>Start as a quantum fluctuation and build your own universe!</p>
     
     <div class="container">
@@ -71,13 +71,61 @@
             }
         }
 
+// Dimensional Expansion effect logic
+function applyDimensionalExpansion() {
+    const storageBoost = 0.5; // 50% increased storage
+    const duration = 10 * 60 * 1000; // 10 minutes in milliseconds
+    const originalStorage = getCurrentStorage(); // Function to get current storage capacity
+    const expandedStorage = originalStorage * (1 + storageBoost);
+    quantumEnergy -= 100000
+    // Temporarily increase storage capacity
+    setStorageCapacity(expandedStorage);
+applyDimensionalExpansion();
+    
+    // Notify the player
+    showNotification("Dimensional Expansion activated! Storage capacity increased by 50% for 10 minutes.");
+    
+    // Restore the original storage after the duration
+    setTimeout(() => {
+        setStorageCapacity(originalStorage);
+        showNotification("Dimensional Expansion has ended. Storage capacity restored.");
+    }, duration);
+}
+
+// Function to get the current storage capacity (just a placeholder)
+function getCurrentStorage() {
+    // Placeholder logic: returns current storage capacity
+    return 1000000; // Example storage value
+}
+
+// Function to set the storage capacity (just a placeholder)
+function setStorageCapacity(newCapacity) {
+    // Placeholder logic: updates storage capacity
+    console.log(`Storage capacity set to: ${newCapacity}`);
+}
+
+// Function to show a notification to the player
+function showNotification(message) {
+    console.log("I got the upgrade it!");  // Replace with your game's UI notification system
+}
+
+// Example usage:
+
+function formatNumber(num, digits = 3) {
+    if (num === 0) return "0";
+    let exponent = Math.floor(Math.log10(Math.abs(num)));
+    let mantissa = (num / Math.pow(10, exponent)).toFixed(digits);
+    return `${mantissa}e${exponent}`;
+}
+
+
         function updateDisplay() {
-            document.getElementById("quantumEnergy").innerText = quantumEnergy;
-            document.getElementById("upgradeCost").innerText = upgradeCost;
-            document.getElementById("darkMatter").innerText = darkMatter;
-            document.getElementById("darkMatterCost").innerText = darkMatterCost;
-            document.getElementById("stars").innerText = stars;
-            document.getElementById("starCost").innerText = starCost;
+            document.getElementById("quantumEnergy").innerText = formatNumber(quantumEnergy);
+            document.getElementById("upgradeCost").innerText = formatNumber(upgradeCost);
+            document.getElementById("darkMatter").innerText = formatNumber(darkMatter);
+            document.getElementById("darkMatterCost").innerText = formatNumber(darkMatterCost);
+            document.getElementById("stars").innerText = formatNumber(stars);
+            document.getElementById("starCost").innerText = formatNumber(starCost);
         }
     </script>
 </body>
