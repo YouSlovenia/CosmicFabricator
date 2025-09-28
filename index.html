@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Fabricator V1.3.0</title>
+    <title>Cosmic Fabricator V1.3.1</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: black; color: white; }
         .container { margin-top: 50px; }
@@ -11,7 +11,7 @@
     </style>
 </head>
 <body>
-    <h1>Cosmic Fabricator V1.3.0</h1>
+    <h1>Cosmic Fabricator V1.3.1</h1>
     <p>Start as a quantum fluctuation and build your own universe!</p>
     
     <div class="container">
@@ -23,6 +23,8 @@
         <p>Dark Matter: <span id="darkMatter">0</span></p>
         <p>Stars Created: <span id="stars">0</span></p>
     </div>
+
+    <div id="notificationArea" style="position: fixed; top: 20px; right: 20px; max-width: 250px; z-index: 1000;"></div>
 
     <script>
         let quantumEnergy = 0;
@@ -106,8 +108,29 @@ function setStorageCapacity(newCapacity) {
 
 // Function to show a notification to the player
 function showNotification(message) {
-    console.log("I got the upgrade it!");  // Replace with your game's UI notification system
+    const area = document.getElementById("notificationArea");
+    const note = document.createElement("div");
+
+    note.innerText = message;
+    note.style.background = "rgba(0, 0, 0, 0.8)";
+    note.style.color = "white";
+    note.style.padding = "10px";
+    note.style.marginTop = "10px";
+    note.style.borderRadius = "8px";
+    note.style.fontSize = "14px";
+    note.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
+    note.style.opacity = "1";
+    note.style.transition = "opacity 1s ease";
+
+    area.appendChild(note);
+
+    // Fade out and remove after 4s
+    setTimeout(() => {
+        note.style.opacity = "0";
+        setTimeout(() => area.removeChild(note), 1000);
+    }, 4000);
 }
+
 
 // Example usage:
 
