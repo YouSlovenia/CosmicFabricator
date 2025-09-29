@@ -3,15 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Fabricator V1.3.1</title>
+    <title>Cosmic Fabricator V1.4.0</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; background-color: black; color: white; }
         .container { margin-top: 50px; }
         .button { padding: 10px 20px; margin: 10px; font-size: 18px; cursor: pointer; }
+        .button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .storage-bar-bg { width: 300px; height: 20px; background: #111; border-radius: 10px; margin: 10px auto; }
+        .storage-bar-fill { height: 100%; background: linear-gradient(to right, #16f0b7, #2a35d6); border-radius: 10px; }
+        .storage-label { font-size: 14px; }
     </style>
 </head>
 <body>
-    <h1>Cosmic Fabricator V1.3.1</h1>
+    <h1>Cosmic Fabricator V1.4.0</h1>
     <p>Start as a quantum fluctuation and build your own universe!</p>
     
     <div class="container">
@@ -20,8 +24,13 @@
         <button class="button" onclick="upgradeParticleFusion()">Upgrade Particle Fusion (Cost: <span id="upgradeCost">10</span>)</button>
         <button class="button" onclick="unlockDarkMatter()">Unlock Dark Matter (Cost: <span id="darkMatterCost">50</span>)</button>
         <button class="button" onclick="createStar()">Create a Star (Cost: <span id="starCost">100</span>)</button>
+        <button class="button" id="dimensionalExpansionBtn" onclick="triggerDimensionalExpansion()">Dimensional Expansion (Cost: 100,000 QE, +50% Storage, 10m)</button>
         <p>Dark Matter: <span id="darkMatter">0</span></p>
         <p>Stars Created: <span id="stars">0</span></p>
+        <div class="storage-label">Storage Capacity: <span id="storageCapacity">1,000,000</span></div>
+        <div class="storage-bar-bg">
+            <div id="storageBar" class="storage-bar-fill" style="width: 100%"></div>
+        </div>
     </div>
 
     <div id="notificationArea" style="position: fixed; top: 20px; right: 20px; max-width: 250px; z-index: 1000;"></div>
@@ -35,8 +44,19 @@
         let stars = 0;
         let starCost = 100;
 
+        // Storage system
+        let baseStorage = 1000000;
+        let storageCapacity = baseStorage;
+        let storageBoosted = false;
+        let storageBoostTimeout = null;
+
         function generateEnergy() {
-            quantumEnergy += fusionLevel;
+            if (quantumEnergy + fusionLevel > storageCapacity) {
+                showNotification("Quantum Energy storage full!");
+                quantumEnergy = storageCapacity;
+            } else {
+                quantumEnergy += fusionLevel;
+            }
             updateDisplay();
         }
 
@@ -73,74 +93,72 @@
             }
         }
 
-// Dimensional Expansion effect logic
-function applyDimensionalExpansion() {
-    const storageBoost = 0.5; // 50% increased storage
-    const duration = 10 * 60 * 1000; // 10 minutes in milliseconds
-    const originalStorage = getCurrentStorage(); // Function to get current storage capacity
-    const expandedStorage = originalStorage * (1 + storageBoost);
-    quantumEnergy -= 100000
-    // Temporarily increase storage capacity
-    setStorageCapacity(expandedStorage);
-applyDimensionalExpansion();
-    
-    // Notify the player
-    showNotification("Dimensional Expansion activated! Storage capacity increased by 50% for 10 minutes.");
-    
-    // Restore the original storage after the duration
-    setTimeout(() => {
-        setStorageCapacity(originalStorage);
-        showNotification("Dimensional Expansion has ended. Storage capacity restored.");
-    }, duration);
-}
+        // Dimensional Expansion activation
+        function triggerDimensionalExpansion() {
+            if (storageBoosted) {
+                showNotification("Dimensional Expansion is already active!");
+                return;
+            }
+            if (quantumEnergy < 100000) {
+                showNotification("Not enough Quantum Energy for Dimensional Expansion!");
+                return;
+            }
+            applyDimensionalExpansion();
+        }
 
-// Function to get the current storage capacity (just a placeholder)
-function getCurrentStorage() {
-    // Placeholder logic: returns current storage capacity
-    return 1000000; // Example storage value
-}
+        function applyDimensionalExpansion() {
+            const storageBoost = 0.5; // 50% increased storage
+            const duration = 10 * 60 * 1000; // 10 minutes in ms
+            quantumEnergy -= 100000;
+            storageCapacity = Math.floor(baseStorage * (1 + storageBoost));
+            storageBoosted = true;
+            document.getElementById("dimensionalExpansionBtn").disabled = true;
+            updateDisplay();
 
-// Function to set the storage capacity (just a placeholder)
-function setStorageCapacity(newCapacity) {
-    // Placeholder logic: updates storage capacity
-    console.log(`Storage capacity set to: ${newCapacity}`);
-}
+            showNotification("Dimensional Expansion activated! Storage capacity increased by 50% for 10 minutes.");
 
-// Function to show a notification to the player
-function showNotification(message) {
-    const area = document.getElementById("notificationArea");
-    const note = document.createElement("div");
+            storageBoostTimeout = setTimeout(() => {
+                storageCapacity = baseStorage;
+                storageBoosted = false;
+                document.getElementById("dimensionalExpansionBtn").disabled = false;
+                showNotification("Dimensional Expansion has ended. Storage capacity restored.");
+                updateDisplay();
+            }, duration);
+        }
 
-    note.innerText = message;
-    note.style.background = "rgba(0, 0, 0, 0.8)";
-    note.style.color = "white";
-    note.style.padding = "10px";
-    note.style.marginTop = "10px";
-    note.style.borderRadius = "8px";
-    note.style.fontSize = "14px";
-    note.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
-    note.style.opacity = "1";
-    note.style.transition = "opacity 1s ease";
+        // Notification system
+        function showNotification(message) {
+            const area = document.getElementById("notificationArea");
+            const note = document.createElement("div");
 
-    area.appendChild(note);
+            note.innerText = message;
+            note.style.background = "rgba(0, 0, 0, 0.8)";
+            note.style.color = "white";
+            note.style.padding = "10px";
+            note.style.marginTop = "10px";
+            note.style.borderRadius = "8px";
+            note.style.fontSize = "14px";
+            note.style.boxShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
+            note.style.opacity = "1";
+            note.style.transition = "opacity 1s ease";
 
-    // Fade out and remove after 4s
-    setTimeout(() => {
-        note.style.opacity = "0";
-        setTimeout(() => area.removeChild(note), 1000);
-    }, 4000);
-}
+            area.appendChild(note);
 
+            // Fade out and remove after 4s
+            setTimeout(() => {
+                note.style.opacity = "0";
+                setTimeout(() => area.removeChild(note), 1000);
+            }, 4000);
+        }
 
-// Example usage:
-
-function formatNumber(num, digits = 3) {
-    if (num === 0) return "0";
-    let exponent = Math.floor(Math.log10(Math.abs(num)));
-    let mantissa = (num / Math.pow(10, exponent)).toFixed(digits);
-    return `${mantissa}e${exponent}`;
-}
-
+        // Utilities
+        function formatNumber(num, digits = 3) {
+            if (num === 0) return "0";
+            if (num < 1000) return num.toLocaleString();
+            let exponent = Math.floor(Math.log10(Math.abs(num)));
+            let mantissa = (num / Math.pow(10, exponent)).toFixed(digits);
+            return `${mantissa}e${exponent}`;
+        }
 
         function updateDisplay() {
             document.getElementById("quantumEnergy").innerText = formatNumber(quantumEnergy);
@@ -149,7 +167,19 @@ function formatNumber(num, digits = 3) {
             document.getElementById("darkMatterCost").innerText = formatNumber(darkMatterCost);
             document.getElementById("stars").innerText = formatNumber(stars);
             document.getElementById("starCost").innerText = formatNumber(starCost);
+            document.getElementById("storageCapacity").innerText = formatNumber(storageCapacity);
+
+            // Storage bar
+            let percent = Math.min(100, (quantumEnergy / storageCapacity) * 100);
+            document.getElementById("storageBar").style.width = percent + "%";
+
+            // Enable/disable Dimensional Expansion button
+            const btn = document.getElementById("dimensionalExpansionBtn");
+            btn.disabled = storageBoosted || quantumEnergy < 100000;
         }
+
+        // Initial display
+        updateDisplay();
     </script>
 </body>
 </html>
